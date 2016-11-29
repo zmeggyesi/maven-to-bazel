@@ -8,6 +8,7 @@ import hu.skawa.migrator.model.Dependency;
 
 public class POMHandler extends DefaultHandler {
 	
+	@SuppressWarnings("unused")
 	private boolean inDependencies = false;
 	private boolean inSingleDependency = false;
 	private String element;
