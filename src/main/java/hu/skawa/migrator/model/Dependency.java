@@ -6,6 +6,8 @@ public class Dependency {
 	private String groupId;
 	private String artifactId;
 	private String version;
+	private String bazelName;
+	private String bazelArtifact;
 	
 	public Dependency() {
 	}
@@ -65,13 +67,23 @@ public class Dependency {
 		sb.append("\tname = \"");
 		
 		// sanitize name
-		sb.append(sanitize(this.groupId + "." + this.artifactId));
+		this.bazelName = sanitize(this.groupId + "." + this.artifactId);
+		sb.append(this.bazelName);
 		
 		sb.append("\",\n\t");
 		sb.append("artifact = \"");
-		sb.append(this.groupId+ ":" + this.artifactId + ":" + this.version);
+		this.bazelArtifact = this.groupId+ ":" + this.artifactId + ":" + this.version;
+		sb.append(this.bazelArtifact);
 		sb.append("\",\n");
 		sb.append(")");
 		return sb.toString();
+	}
+
+	public String getBazelName() {
+		return bazelName;
+	}
+
+	public String getBazelArtifact() {
+		return bazelArtifact;
 	}
 }

@@ -1,5 +1,8 @@
 package hu.skawa.migrator.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -13,6 +16,7 @@ public class POMHandler extends DefaultHandler {
 	private boolean inSingleDependency = false;
 	private String element;
 	private Dependency dep;
+	List<Dependency> resolvedDependencies = new ArrayList<Dependency>();
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -37,9 +41,22 @@ public class POMHandler extends DefaultHandler {
 		if ("dependency".equalsIgnoreCase(qName)) {
 			inSingleDependency = false;
 //			System.out.println(dep.toString());
-			System.out.println(dep.toBazelDirective());
+//			System.out.println(dep.toBazelDirective());
+			resolvedDependencies.add(dep);
 		}
 	}
+	
+	@Override
+	public void endDocument() throws SAXException {
+		System.out.println("ALL DEPENDENICES FOUND");
+		for (Dependency dep : resolvedDependencies) {
+			System.out.println(dep.toBazelDirective());
+		}
+		System.out.println("REFERENCES FOR BUILDFILES");
+		for (Dependency dep : resolvedDependencies) {
+			System.out.println(dep.getArtifactId() + ": @" + dep.getBazelName() + "//jar");
+		}
+	};
 	
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
