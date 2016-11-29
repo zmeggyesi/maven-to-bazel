@@ -36,7 +36,8 @@ public class POMHandler extends DefaultHandler {
 		}
 		if ("dependency".equalsIgnoreCase(qName)) {
 			inSingleDependency = false;
-			System.out.println(dep.toString());
+//			System.out.println(dep.toString());
+			System.out.println(dep.toBazelDirective());
 		}
 	}
 	
@@ -47,7 +48,6 @@ public class POMHandler extends DefaultHandler {
 			if (content.length() == 0) {
 				return;
 			}
-//			System.out.println(element + ":" + content);
 			switch (element) {
 				case "groupId": 
 					dep.setGroupId(content);

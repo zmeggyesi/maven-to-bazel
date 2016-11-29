@@ -1,5 +1,7 @@
 package hu.skawa.migrator.model;
 
+import com.google.common.base.CharMatcher;
+
 public class Dependency {
 	private String groupId;
 	private String artifactId;
@@ -51,6 +53,25 @@ public class Dependency {
 		sb.append("Version: ");
 		sb.append(this.version);
 		sb.append("\n");
+		return sb.toString();
+	}
+	
+	private String sanitize(CharSequence input) {
+		return CharMatcher.javaLetterOrDigit().or(CharMatcher.is('_')).negate().replaceFrom(input, "_");
+	}
+	
+	public String toBazelDirective() {
+		StringBuilder sb = new StringBuilder("maven_jar(\n");
+		sb.append("\tname = \"");
+		
+		// sanitize name
+		sb.append(sanitize(this.groupId + "." + this.artifactId));
+		
+		sb.append("\",\n\t");
+		sb.append("artifact = \"");
+		sb.append(this.groupId+ ":" + this.artifactId + ":" + this.version);
+		sb.append("\",\n");
+		sb.append(")");
 		return sb.toString();
 	}
 }
