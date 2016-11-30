@@ -6,10 +6,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
-import hu.skawa.migrator.handler.POMHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import hu.skawa.migrator.model.Dependency;
 
 public class Migrator {
@@ -19,10 +26,34 @@ public class Migrator {
 		
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		try {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			SAXParser saxParser = factory.newSAXParser();
-			POMHandler pomHandler = new POMHandler(dependencies);
-			saxParser.parse(pom, pomHandler);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(pom);
+			XPathFactory xpf = XPathFactory.newInstance();
+			XPath path = xpf.newXPath();
+			XPathExpression exp = path.compile("/project/dependencies/dependency[*]");
+			NodeList rawDependencies = (NodeList) exp.evaluate(doc, XPathConstants.NODESET);
+			for (int index = 0; index < rawDependencies.getLength(); index++) {
+				Node dependencyNode = rawDependencies.item(index);
+				Dependency dep = new Dependency();
+				NodeList dependencyData = dependencyNode.getChildNodes();
+				for (int dataIndex = 0; dataIndex<dependencyData.getLength(); dataIndex++) {
+					Node dependencyDataNode = dependencyData.item(dataIndex);
+					String nodeName = dependencyDataNode.getNodeName();
+					switch (nodeName) {
+						case "groupId":
+							dep.setGroupId(dependencyDataNode.getTextContent());
+							continue;
+						case "artifactId":
+							dep.setArtifactId(dependencyDataNode.getTextContent());
+							continue;
+						case "version":
+							dep.setVersion(dependencyDataNode.getTextContent());
+							continue;
+					}
+				}
+				dependencies.add(dep);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
