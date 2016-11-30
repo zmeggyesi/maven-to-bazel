@@ -8,14 +8,18 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import hu.skawa.migrator.model.Dependency;
 
@@ -54,7 +58,17 @@ public class Migrator {
 				}
 				dependencies.add(dep);
 			}
-		} catch (Exception e) {
+		} catch (DOMException e) {
+			System.err.println("Invalid DOM Parsed!");
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			System.err.println("Parser failed!");
+			e.printStackTrace();
+		} catch (SAXException e) {
+			System.err.println("SAX Exception!");
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			System.err.println("Invalid XPath!");
 			e.printStackTrace();
 		}
 
