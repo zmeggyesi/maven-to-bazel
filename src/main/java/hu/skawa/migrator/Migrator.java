@@ -94,6 +94,10 @@ public class Migrator {
 				}
 				writer.close();
 			}
+		} else {
+			for (Dependency dep : dependencies) {
+				System.out.println(dep.toBazelDirective());
+			}
 		}
 		
 	}
