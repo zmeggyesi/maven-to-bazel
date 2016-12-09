@@ -1,3 +1,6 @@
+# DEPRECATED, SEE [Maven Plugin](https://github.com/zmeggyesi/migrator-maven-plugin)
+# RETAINED FOR REFERENCE
+
 # maven-to-bazel
 ## Maven-Bazel dependency migrator
 
